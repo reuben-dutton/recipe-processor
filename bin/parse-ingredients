@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Parses ingredients using a given CRF model
+#
+# Example
+#  $ bin/parse_ingredients models/model.crfmodel
+
+if [ -z "$1" ];
+  then echo "Usage: parse_ingredients model_file ingredients_file" && exit 1;
+fi
+export MODEL_FILE="$1"
+
+if [ -z "$2" ];
+  then echo "Usage: parse_ingredients model_file ingredients_file" && exit 1;
+fi
+export INGREDIENTS_FILE="$2"
+
+cat $INGREDIENTS_FILE \
+| pipenv run python bin/process-items.py \
+| pipenv run python bin/crfpp_to_crfsuite.py \
+| crfsuite tag -p --model=$MODEL_FILE - \
+| pipenv run python bin/read_results.py -i $INGREDIENTS_FILE

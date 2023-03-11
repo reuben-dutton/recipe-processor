@@ -1,0 +1,20 @@
+
+# Pipenv
+Pipfile
+Pipfile.lock
+
+# Generated json files (except annotations)
+# Generated csv files (except pre-existing csvs)
+*.json
+*.csv
+!**/nyt-ingredients-snapshot-2015-edited.csv
+!data/annotations/*
+
+# Generated encodings
+data/encoding/*
+
+# Models
+models/*
+
+# Text files in the root directory
+/*.txt

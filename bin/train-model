@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Trains a model using annotations given in a input file.
+# Saves the model to the given directory
+#
+# Example
+#  $ bin/train-model data/singular-annotations.json models/nyt.crfmodel
+
+if [ -z "$1" ];
+  then echo "Usage: train-model annotations_file model_file" && exit 1;
+fi
+export ANNOTATIONS_FILE="$1"
+
+if [ -z "$2" ];
+  then echo "Usage: train-model annotations_file model_file" && exit 1;
+fi
+export MODEL_FILE="$2"
+
+cat $ANNOTATIONS_FILE \
+| pipenv run python bin/annotations_to_crfpp.py \
+| pipenv run python bin/crfpp_to_crfsuite.py \
+| crfsuite learn --model=$MODEL_FILE -
+
+# | crfsuite learn --model=$MODEL_FILE -p feature.possible_transitions=1 -p feature.possible_states=1 - 
