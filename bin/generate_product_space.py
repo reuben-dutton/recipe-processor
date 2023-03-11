@@ -1,4 +1,8 @@
 import json
+import os
+import sys
+
+sys.path.append(os.getcwd())
 
 import numpy as np
 import scipy.sparse
@@ -8,8 +12,6 @@ from sklearn.neighbors import BallTree
 from sklearn.pipeline import Pipeline
 
 from training.metrics import pipelines
-
-
 
 
 productsDF = pd.read_csv("data/coles-products.csv")
