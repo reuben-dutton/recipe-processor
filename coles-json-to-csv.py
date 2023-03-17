@@ -26,6 +26,7 @@ def convert_to_csv_entry(data):
         else:
             new_data[column_name] = ""
     del new_data['prob']
+    del new_data['productImageURL']
     return new_data
         
 

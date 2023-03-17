@@ -1,9 +1,9 @@
 import re
 
 from nltk.tokenize import word_tokenize, regexp_tokenize
-import inflect
+from nltk.stem import WordNetLemmatizer
 
-p = inflect.engine()
+wnl = WordNetLemmatizer()
 
 # match any non-whitespace character with  . - \ '  inbetween them
 # also match punctuation
@@ -12,13 +12,8 @@ token_pattern = r'''(?x)\w+(?:[-\/\.\']\w+)*\.?|[][&.,;"'?():-_`]'''
 def tokenize(sentence: str):
     return regexp_tokenize(clumpFractions(cleanUnicodeFractions(sentence)), token_pattern)
 
-# used for ingredients, not products (Brand names will be incorrectly singularized)
 def singularize(word: str):
-    if word.endswith("'s"):
-        return word
-    if not p.singular_noun(word):
-        return word
-    return p.singular_noun(word)
+    return wnl.lemmatize(word)
 
 def replace_unit_abbreviations(text: str):
     """

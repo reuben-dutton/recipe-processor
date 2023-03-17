@@ -21,3 +21,4 @@ models/*
 
 # Text files in the root directory
 /*.txt
+/*.tsv

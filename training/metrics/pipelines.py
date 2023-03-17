@@ -20,10 +20,10 @@ def get_preprocessing_pipeline(num_dims):
     puList = [[item.value for item in list(ProductUnit)]]
 
     ### which columns need which type of processing
-    onehot_token_cols = ['brand', 'name', 'pack']   # one-hot encoding
-    binary_token_cols = ['variant', 'prep']         # binary count encoding
+    onehot_token_cols = ['name']   # one-hot encoding
+    binary_token_cols = ['pack', 'variant']         # binary count encoding
     unit_cols = {'pricingPer': ppList,              # one-hot encoding,
-                 'productSizeUnits': puList}        # with given categories
+                 'productSizeUnits': puList}            # with given categories
     numerical_cols = ['pricePer', 'priceTotal',     # normalization
                       'productSize']
 

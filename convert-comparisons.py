@@ -5,7 +5,7 @@ import os
 import pandas as pd
 import numpy as np
 
-comparisonCsvPath = "data/product-comparisons.csv"
+comparisonCsvPath = "data/annotations/product-comparisons.csv"
 productsCsvPath = "data/coles-products.csv"
 
 comparisons = pd.read_csv(comparisonCsvPath)
@@ -26,6 +26,8 @@ for index, comparison in comparisons.iterrows():
     if -1 in [index1, index2, index3]:
         continue
     compIndexes.append([index1, index2, index3])
+
+print(len(compIndexes))
 
 with open("data/encoding/comparison-indexes.npy", 'wb') as f:
     np.save(f, np.array(compIndexes))

@@ -10,21 +10,21 @@ import pandas as pd
 import pickle
 from sklearn.neighbors import BallTree
 from sklearn.pipeline import Pipeline
+from scipy.spatial.distance import cosine
 
 from training.metrics import pipelines
 
 
 productsDF = pd.read_csv("data/coles-products.csv")
-comparisonsDF = pd.read_csv("data/product-comparisons.csv")
 
 with open("data/encoding/comparison-indexes.npy", 'rb') as f:
     compIndexes = np.load(f, allow_pickle=True)
 
-# print(productsDF.head())
+print(productsDF.head())
 
 
 # Construct the preprocessing pipeline
-preprocessing_pipeline = pipelines.get_preprocessing_pipeline(num_dims=900)
+preprocessing_pipeline = pipelines.get_preprocessing_pipeline(num_dims=500)
 
 # Encode the products dataframe into a numpy array with reduced dimensions
 products_trans = preprocessing_pipeline.fit_transform(productsDF)
@@ -46,13 +46,25 @@ metric_pipeline.fit(compIndexes)
 # transform the encoded products into the metric space
 product_metric_trans = metric_pipeline.transform(products_trans)
 
+with open("data/encoding/products-metric.npy", 'wb') as f:
+    np.save(f, product_metric_trans)
+
 # create a nearest neighbours query tree from the metric space
-tree = BallTree(product_metric_trans)
+tree = BallTree(product_metric_trans, metric=cosine)
 
+print("saving model")
 
-query_id = 100
-dist, ind = tree.query(product_metric_trans[query_id:query_id+1], k=10)
-print(productsDF.iloc[ind[0]])
-
-with open("data/encoding/product-space-balltree.pkl", 'wb') as p:
+with open("models/product-space-full.pkl", 'wb') as p:
     pickle.dump(tree, p)
+
+print("saving tsv data and labels")
+
+with open("data.tsv", 'w') as f1, open("labels.tsv", 'w') as f2:
+    for index, row in enumerate(product_metric_trans):
+        f1.write("\t".join([str(num) for num in row]) + '\n')
+        f2.write(productsDF.iloc[index]["input"] + '\n')
+
+
+
+
+    
