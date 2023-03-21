@@ -101,6 +101,60 @@ def get_preprocessing_pipeline(num_dims):
     return preprocessing_pipeline
 
 
+def get_ingr_pipeline():
+
+    ### which columns need which type of processing
+    onehot_token_cols = []              # one-hot encoding
+    binary_token_cols = ['NAME']        # binary count encoding
+
+    # Fill empty string values (np.nan) with ""
+    # No need to fill empty numerical values, these are filtered out by
+    # the Coles website scraper.
+    imputPipeline = Pipeline(
+        steps = [
+            ('imput', PandasSimpleImputer(strategy="constant", fill_value=""))
+        ]
+    )
+
+    # one-hot token encoding
+    ohtPipe = Pipeline(
+        steps = [
+            ('onehot_token', OneHotEncoder()),
+        ]
+    )
+
+    # binary token encoding (bag-of-words but with counts either 0 or 1)
+    binaryPipe = Pipeline(
+        steps=[
+            ('count_token', CountVectorizer(binary=True)),
+        ]
+    )
+
+    # Construct a ColumnTransformer, which will encode different columns separately
+    # Some text columns encode possible values in one-hot vectors
+    # Some text columns encode token presence in a binary vector
+    # Units are one-hot encoded (per kg, g, L, etc)
+    # Numerical columns are normalized
+    columnTransformers = ColumnTransformer(
+        transformers=[
+            (f'handle_onehot_text', ohtPipe, onehot_token_cols)
+        ] + [
+            (f'handle_binary_text_{tokenType}', binaryPipe, tokenType) 
+            for tokenType in binary_token_cols
+        ]
+    )
+
+    # Construct the entire pre-processing pipeline
+    preprocessing_pipeline = Pipeline(
+        steps = [
+            ('imput', imputPipeline),                       # replace missing values
+            ('transformation', columnTransformers),         # encode columns
+        ]
+    )
+
+    return preprocessing_pipeline
+
+
 def get_metric_pipeline(preprocessor, n_basis=50):
     metric_pipeline = Pipeline(
         steps = [

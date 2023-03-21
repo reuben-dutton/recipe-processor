@@ -1,6 +1,5 @@
 from typing import Tuple
 import re
-import orjson
 import os
 import sys
 import decimal

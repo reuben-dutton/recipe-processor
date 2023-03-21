@@ -9,8 +9,14 @@ wnl = WordNetLemmatizer()
 # also match punctuation
 token_pattern = r'''(?x)\w+(?:[-\/\.\']\w+)*\.?|[][&.,;"'?():-_`]'''
 
+americanized = {"milliliters": "millilitres",
+                "liters": "litres"}
+
 def tokenize(sentence: str):
     return regexp_tokenize(clumpFractions(cleanUnicodeFractions(sentence)), token_pattern)
+
+def normalizeToken(word: str):
+    return singularize(unamericanize(word))
 
 def singularize(word: str):
     return wnl.lemmatize(word)
@@ -20,12 +26,32 @@ def replace_unit_abbreviations(text: str):
     Replace unit abbreviations with the proper respective measurement.
     """
     text = re.sub(r'(\d+) ?g ', r'\1 grams ', text)
+    text = re.sub(r'(\d+) ?kg ', r'\1 kilograms ', text)
     text = re.sub(r'(\d+) ?oz ', r'\1 ounces ', text, flags=re.IGNORECASE)
     text = re.sub(r'(\d+) ?l ', r'\1 litres ', text, flags=re.IGNORECASE)
     text = re.sub(r'(\d+) ?ml ', r'\1 millilitres ', text, flags=re.IGNORECASE)
     text = re.sub(r'(\d+) ?tsp\.?', r'\1 teaspoons', text, flags=re.IGNORECASE)
     text = re.sub(r'(\d+) ?tbsp\.?', r'\1 tablespoons', text, flags=re.IGNORECASE)
     return text
+
+def decompose_units(text: str):
+    required_units = [
+        'cup', 'tablespoon', 'teaspoon', 'gram', 'kilogram', 'millilitre', 'litre'
+    ]
+    # The following removes slashes following American units and replaces it with a space.
+    for unit in required_units:
+        text = text.replace(unit + '/', unit + ' ')
+        text = text.replace(unit + 's/', unit + 's ')
+
+    # replace '\n' and '\t' with spaces
+    text = re.sub(r'(\\n)|(\\t)+', ' ', text)
+
+    return text
+
+def unamericanize(word: str):
+    # return the proper spelling if it's incorrectly spelled,
+    # otherwise return the original word
+    return americanized.get(word, word)
 
 def getFeatures(token, index, tokens):
     """

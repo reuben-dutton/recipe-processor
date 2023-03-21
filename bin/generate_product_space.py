@@ -57,6 +57,11 @@ print("saving model")
 with open("models/product-space-full.pkl", 'wb') as p:
     pickle.dump(tree, p)
 
+print("saving preprocessing pipeline")
+
+with open("data/encoding/preprocessing-pipeline.pkl", 'wb') as p:
+    pickle.dump(preprocessing_pipeline, p)
+
 print("saving tsv data and labels")
 
 with open("data.tsv", 'w') as f1, open("labels.tsv", 'w') as f2:

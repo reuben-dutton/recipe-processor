@@ -37,7 +37,7 @@ for currentAnnotations in annotations:
 
     for i, (token, tag) in enumerate(bioAnnotations):
         features = utils.getFeatures(token, i + 1, tokens)
-        output.append(utils.joinLine([utils.singularize(token)] + features + [tag]))
+        output.append(utils.joinLine([utils.normalizeToken(token)] + features + [tag]))
     
     sys.stdout.write("\n".join(output))
     sys.stdout.write("\n\n")

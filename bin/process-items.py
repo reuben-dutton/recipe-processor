@@ -34,7 +34,7 @@ for raw_ingredient_line in raw_ingredient_lines:
     # Get features for each token and write to stdout
     for i, token in enumerate(tokens):
         features = utils.getFeatures(token, i + 1, tokens)
-        sys.stdout.write(utils.joinLine([utils.singularize(token)] + features + ["NoTag"]))
+        sys.stdout.write(utils.joinLine([utils.normalizeToken(token)] + features + ["NoTag"]))
         sys.stdout.write("\n")
     sys.stdout.write("\n")
 sys.stdout.flush()

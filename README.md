@@ -17,7 +17,7 @@ You may also need to mess with ```bin/read_results.py```, as CRFSuite only outpu
 
 # Current pipelines:
 
-These instructions assume that you are using CRFSuite. If you're using CRF++, sorry - some of these might need some additional work.
+These instructions assume that you are using CRFSuite. If you're using CRF++, sorry - some of these might need some additional effort if you want to make them work properly.
 
 
 ## Training a model:
