@@ -1,0 +1,11 @@
+#!/bin/bash
+
+models=$(ls tar-models)
+
+
+for modelfile in ${models[@]}
+do
+    bin/rotate-model "tar-models/${modelfile}"
+    echo "tar-models/${modelfile}" >> "output.txt"
+    pipenv run python bin/test/test_model.py >> "output.txt"
+done

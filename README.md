@@ -1,3 +1,27 @@
+## Background
+
+This project is an attempt to create a set of programs that can:
+
+ - Scrape a recipe from an internet site (e.g. taste.com)
+ - Parse that recipe into constituent components (ingredients, units, quantities, notes)
+ - Scrape current grocery store product prices from [Coles](https://www.coles.com.au/)
+ - Identify what product can be used as each ingredient
+ - Compose a detailed shopping list for a set of recipes, including information such as:
+    - Price per serving
+    - Overall price
+    - Possible ingredient alternatives (use a different brand of chicken, perhaps?)
+
+These goals are attained through the use of three types of models:
+1. Conditional Random Fields
+2. Metric learning
+3. Neural networks
+
+Which are used to:
+1. Parse recipes into constituent components
+2. Convert Coles products into a vector space with more useful characteristics
+3. Convert from an ingredient (e.g. "basil") to a Coles product in the above metric space (e.g. "Coles Basil Herb Punnet")
+
+
 ## Setup
 
 You'll need to install [CRFSuite](http://www.chokkan.org/software/crfsuite/) on your system to generate and use the CRF models in this project.
@@ -64,11 +88,11 @@ The output is a json file with the parsed ingredients, as well as the probabilit
 
 ## Scraping and parsing products
 
-1. Run ```pipenv run python scraping/coles.py```. This scrapes the Coles website for products listed online, and dumps the data into ```data/products.json```.
-2. Pick a model that you've previously trained on product annotations (e.g. "models/product.crfmodel")
-3. Run ```bin/parse-products``` with your model file and ```data/products.json``` specified in the following order:
+1. Run ```pipenv run python scraping/coles.py```. This scrapes the Coles website for products listed online, and dumps the data into ```data/products-full.json```.
+2. Pick a model that you've previously trained on product annotations (e.g. "models/metric/product.crfmodel")
+3. Run ```bin/parse-products``` with your model file and ```data/products-full.json``` specified in the following order:
 ```bash
-bin/parse-products "models/products.crfmodel" "data/products.json" > "parsed-products.json"
+bin/parse-products "models/metric/products.crfmodel" "data/products-full.json" > "parsed-products.json"
 ``` 
 
 This process generats a json file identical to the scraped products json file, with the addition of tags for that product and the probability of that tag as given by the model. 
@@ -96,9 +120,14 @@ instead of:
 
 
 
+# Q&A
+
+If you have questions about this project, or want to use parts of it in your own projects, feel free to email me at reubendutton@gmail.com
+
 
 # Todo
 
-- [ ] Add more annotations
-- [ ] Convert from ingredient tags to the product metric space
-- [ ] Parse an entire recipe and identify cost per serving
+- [ ] Add more annotations for the metric learner and neural network models
+- [ ] Add more annotations for the ingredient and product parser CRF models
+- [ ] Create more accurate conversions between units (e.g. cups of basil to grams of Coles Basil Herb Punnet)
+- [ ] General optimization (slow :( )

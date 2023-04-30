@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+requests = "*"
+beautifulsoup4 = "*"
+nltk = "*"
+numpy = "*"
+simplejson = "*"
+scipy = "*"
+metric-learn = "*"
+scikit-learn = "*"
+psutil = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"

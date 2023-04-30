@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# pipenv run python bin/metric/convert-comparisons.py
+pipenv run python bin/metric/augment-data.py
+pipenv run python bin/metric/generate_product_space.py

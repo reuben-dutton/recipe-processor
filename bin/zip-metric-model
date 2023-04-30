@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z "$1" ];
+  then echo "Usage: zip-metric-model output_file" && exit 1;
+fi
+export OUTPUT_FILE="$1"
+
+PROD_PIPELINE="models/metric/encoding/preprocessing-pipeline.pkl"
+METRIC_PIPELINE="models/metric/encoding/metric_pipeline.pkl"
+
+
+tar cvf $OUTPUT_FILE $PROD_PIPELINE $METRIC_PIPELINE

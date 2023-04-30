@@ -1,18 +1,17 @@
 import pandas as pd
-from metric_learn import SCML
+from .scml import _BaseSCMLNoCheck
+from metric_learn.base_metric import _TripletsClassifierMixin
 from sklearn.impute import SimpleImputer
 
 
-
-class PipelineSCML(SCML):
+class PipelineSCML(_BaseSCMLNoCheck, _TripletsClassifierMixin):
     '''
     a wrapper for the SCML estimator in the metric-learn package, so it can be
-    used in a sklearn Pipeline
+    used in a sklearn Pipeline. also inherits from the _BaseSCMLNoCheck class so
+    estimator doesn't reconstruct the array when a preprocessor is used
     '''
-    # add an optional y=None
     def fit(self, triplets, y=None):
-        super().fit(triplets)
-
+        self._fit(triplets)
 
 
 class PandasSimpleImputer(SimpleImputer):

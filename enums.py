@@ -20,10 +20,10 @@ class ProductPricing(Enum):
 
 class ProductUnit(Enum):
     NONE = "none"
-    EACH = "each"
-    PACK = "pack"
-    PIECE = "piece"
-    BUNCH = "bunch"
+    EACH = "each" # 1 item
+    PACK = "pack" # idk
+    PIECE = "piece" # 1 item
+    BUNCH = "bunch" # 10 items
     GRAMS = "g"
     KILOGRAMS = "kg"
     MILLILITRES = "mL"

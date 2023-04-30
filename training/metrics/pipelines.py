@@ -12,20 +12,34 @@ from sklearn.decomposition import TruncatedSVD
 from .estimators import PandasSimpleImputer, PipelineSCML
 from enums import ProductPricing, ProductUnit
 
-
-def get_preprocessing_pipeline(num_dims):
+### which columns need which type of processing
+def get_categories(categories):
     # Get all possible categories for unit columns
     # ppList = ["per 1kg", "per L", "per 100g", ...]
     ppList = [[item.value for item in list(ProductPricing)]]
     puList = [[item.value for item in list(ProductUnit)]]
 
-    ### which columns need which type of processing
-    onehot_token_cols = ['name']   # one-hot encoding
-    binary_token_cols = ['pack', 'variant']         # binary count encoding
+    onehot_token_cols = ['brand']   # one-hot encoding
+    binary_token_cols = ['name', 'variant', 'prep', 'pack']         # binary count encoding
     unit_cols = {'pricingPer': ppList,              # one-hot encoding,
-                 'productSizeUnits': puList}            # with given categories
+                'productSizeUnits': puList}            # with given categories
     numerical_cols = ['pricePer', 'priceTotal',     # normalization
-                      'productSize']
+                    'productSize']
+    
+    if "noNum" in categories:
+        numerical_cols = []
+    if "noUnit" in categories:
+        unit_cols = dict()
+    if "noBrand" in categories:
+        onehot_token_cols = []
+    if "noPrepnoPack" in categories:
+        binary_token_cols = ['name', 'variant']
+
+    return (onehot_token_cols, binary_token_cols, unit_cols, numerical_cols)
+
+def get_preprocessing_pipeline(num_dims, categories):
+
+    onehot_token_cols, binary_token_cols, unit_cols, numerical_cols = get_categories(categories)
 
     # Fill empty string values (np.nan) with ""
     # No need to fill empty numerical values, these are filtered out by
@@ -155,10 +169,12 @@ def get_ingr_pipeline():
     return preprocessing_pipeline
 
 
-def get_metric_pipeline(preprocessor, n_basis=50):
+def get_metric_pipeline(preprocessor, max_iter=10000, n_basis=1000):
     metric_pipeline = Pipeline(
         steps = [
-            ('scml', PipelineSCML(preprocessor=preprocessor, n_basis=n_basis))
+            ('scml', PipelineSCML(preprocessor=preprocessor, max_iter=max_iter, 
+                                  n_basis=n_basis, verbose=True, output_iter=2000,
+                                  ))
         ]
     )
     return metric_pipeline

@@ -2,6 +2,8 @@ import csv
 import sys
 import os
 
+sys.path.append(os.getcwd())
+
 import pandas as pd
 import numpy as np
 
@@ -10,8 +12,8 @@ import numpy as np
     position in the coles-products.csv file)
 '''
 
-comparisonCsvPath = "data/annotations/product-comparisons.csv"
-productsCsvPath = "data/coles-products.csv"
+comparisonCsvPath = "data/comparisons/product-comparisons.csv"
+productsCsvPath = "data/tagged-products-full.csv"
 
 comparisons = pd.read_csv(comparisonCsvPath)
 products = pd.read_csv(productsCsvPath)
@@ -29,6 +31,9 @@ def find_product_index(productName):
     # if matches are found, return the first one
     return sub[0]
 
+
+
+
 for index, comparison in comparisons.iterrows():
     index1 = find_product_index(comparison['product'])
     index2 = find_product_index(comparison['alt1'])
@@ -42,5 +47,5 @@ for index, comparison in comparisons.iterrows():
 # print how many comparisons there are
 print(len(compIndexes))
 
-with open("data/encoding/comparison-indexes.npy", 'wb') as f:
+with open("data/comparisons/comparison-indexes.npy", 'wb') as f:
     np.save(f, np.array(compIndexes))

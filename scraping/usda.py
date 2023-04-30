@@ -9,9 +9,9 @@ def search_usda(query: str):
     requrl = baseurl + f'?api_key={api_key}&query={urllib.parse.quote(query)}&pageSize=1'
     resp = requests.get(requrl)
     respJSON = resp.json()
-    print(respJSON['foods'])
+    print(respJSON['foods'][0])
 
 
 
 if __name__ == "__main__":
-    search_usda("pork sausage")
+    search_usda("self-raising flour")

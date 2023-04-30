@@ -181,5 +181,5 @@ if __name__ == "__main__":
             currPageNum += 1
             allIngredients.extend(newList)
             newList = retrieve_page(category, currPageNum)
-            with open('data/products.json', 'w') as j:
+            with open('data/products-full.json', 'w') as j:
                 simplejson.dump([ing.serialize() for ing in allIngredients], j, use_decimal=True)

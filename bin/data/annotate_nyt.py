@@ -98,7 +98,7 @@ def _getAltLines(text: str):
 
 
 if __name__ == "__main__":
-    ingredientsCSVPath = "data/nyt-ingredients-snapshot-2015-edited.csv"
+    ingredientsCSVPath = "data/nyt-ingredients-snapshot-2015-filtered.csv"
     df = pd.read_csv(ingredientsCSVPath)
 
     df = df.fillna("")

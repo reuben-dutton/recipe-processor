@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+pipenv run python bin/neural/encode_map.py
+pipenv run python bin/neural/train_neural.py

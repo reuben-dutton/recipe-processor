@@ -1,9 +1,10 @@
 import json
 import csv
+import os
+import sys
+import argparse
 
-
-with open("data/coles-products.json", 'r') as j:
-    data = json.load(j)
+sys.path.append(os.getcwd())
 
 column_names = ['input', 'name', 'variant', 
                 'brand', 'prep', 'pack', 
@@ -13,7 +14,7 @@ column_names = ['input', 'name', 'variant',
 token_column_names = ['name', 'variant', 'brand', 
                       'prep', 'pack']
 
-output_path = "data/coles-products.csv"
+output_path = "data/tagged-products-full.csv"
 
 def convert_to_csv_entry(data):
     new_data = data.copy()
@@ -28,10 +29,19 @@ def convert_to_csv_entry(data):
     del new_data['prob']
     del new_data['productImageURL']
     return new_data
-        
 
-with open(output_path, 'w', newline='') as c:
-    writer = csv.DictWriter(c, fieldnames=column_names)
-    writer.writeheader()
-    for product in data:
-        writer.writerow(convert_to_csv_entry(product))
+def main(args):
+    data = json.loads(sys.stdin.readline().rstrip())
+    with open(args.output_file, 'w', newline='') as c:
+        writer = csv.DictWriter(c, fieldnames=column_names)
+        writer.writeheader()
+        for product in data:
+            writer.writerow(convert_to_csv_entry(product))
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='Ingredient Phrase Tagger',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-o', '--output-file', required=True)
+    main(parser.parse_args())
+

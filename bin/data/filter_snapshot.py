@@ -7,7 +7,7 @@ inspecific ingredient listings and stray HTML markup)
 '''
 
 filepath = "nyt-ingredients-snapshot-2015.csv"
-editedFilepath = "nyt-ingredients-snapshot-2015-edited.csv"
+editedFilepath = "nyt-ingredients-snapshot-2015-filtered.csv"
 
 with open(filepath, 'r', encoding='utf-8') as f:
     df = pd.read_csv(f)

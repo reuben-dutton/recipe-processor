@@ -1,0 +1,73 @@
+#!/bin/bash
+
+NUM_MODELS=5
+NUM_NETWORKS=5
+
+POSITIVE_PER_VALS=(0.4)
+NEGATIVE_PER_VALS=(0.3)
+SECTION_ADDITIONS_VALS=(100)
+
+MODEL_DIMENSIONS=(4096)
+MODEL_TYPES=("noNum noUnit noBrand noPacknoPrep")
+
+for posperval in "${POSITIVE_PER_VALS[@]}"
+do
+
+    for negperval in "${NEGATIVE_PER_VALS[@]}"
+    do
+
+        for sectionadditionval in "${SECTION_ADDITIONS_VALS[@]}"
+        do
+
+            echo "Creating new augmented data"
+            echo "$posperval" "$negperval" "$sectionadditionval"
+            pipenv run python bin/metric/augment-data.py "$posperval" "$negperval" "$sectionadditionval"
+            echo "Created new augmented data."
+
+            for modeltype in "${MODEL_TYPES[@]}"
+            do
+            
+                for modeldim in "${MODEL_DIMENSIONS[@]}"
+                do
+
+                    for n in $(seq $NUM_MODELS)
+                    do
+
+                        echo "$modeltype" "$modeldim" "$posperval" "$negperval" "$sectionadditionval" "$n"
+                        MODEL_FILE="tar-models/${modeltype// /_}-${modeldim}d-${posperval}-${negperval}-${sectionadditionval}-${n}.tar"
+                        echo $MODEL_FILE
+
+                        pipenv run python bin/metric/generate_product_space.py "$modeldim" \""$modeltype"\"
+
+                        bin/zip-metric-model $MODEL_FILE
+
+                        echo "Testing"
+                        echo $MODEL_FILE >> "output.txt"
+
+                        for i in $(seq $NUM_NETWORKS)
+                        do
+                            echo "Training neural network"
+                            bin/train-neural
+
+                            pipenv run python bin/test/test_model.py >> "output.txt"
+                        done
+
+                    done
+
+                done
+
+            done
+
+        done
+
+    done
+
+done
+
+# for i in {1..10}
+# do
+#     echo "Training model ${i}"
+#     bin/train-metric
+#     echo "Compressing model ${i}"
+#     bin/zip-metric-model "tar-models/model-full-1024d-${i}.tar"
+# done

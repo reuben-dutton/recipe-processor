@@ -2,23 +2,30 @@
 # Python
 **/__pycache__
 
-# Pipenv
-Pipfile
-Pipfile.lock
-
 # Generated json files (except annotations)
 # Generated csv files (except pre-existing csvs)
 *.json
 *.csv
-!**/nyt-ingredients-snapshot-2015-edited.csv
+*.tsv
+!**/nyt-ingredients-snapshot-2015-filtered.csv
 !data/annotations/*
 
+
 # Generated encodings
-data/encoding/*
+models/metric/encoding/*
+
+# Generated comparison indexes
+data/comparisons/*.npy
 
 # Models
 models/*
 
-# Text files in the root directory
+# Text files in the root directory and recipes folder
 /*.txt
-/*.tsv
+**/recipes/*.txt
+
+# tsv files
+**/*.tsv
+
+# zipped metric models
+tar-models/*

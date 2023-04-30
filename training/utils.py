@@ -1,4 +1,5 @@
 import re
+import decimal
 
 from nltk.tokenize import word_tokenize, regexp_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -15,6 +16,11 @@ americanized = {"milliliters": "millilitres",
 def tokenize(sentence: str):
     return regexp_tokenize(clumpFractions(cleanUnicodeFractions(sentence)), token_pattern)
 
+def normalizeTokens(string: str):
+    if not type(string) is str:
+        return string
+    return " ".join([normalizeToken(token) for token in string.split(" ")])
+
 def normalizeToken(word: str):
     return singularize(unamericanize(word))
 
@@ -25,6 +31,7 @@ def replace_unit_abbreviations(text: str):
     """
     Replace unit abbreviations with the proper respective measurement.
     """
+    text = cleanUnicodeFractions(text)
     text = re.sub(r'(\d+) ?g ', r'\1 grams ', text)
     text = re.sub(r'(\d+) ?kg ', r'\1 kilograms ', text)
     text = re.sub(r'(\d+) ?oz ', r'\1 ounces ', text, flags=re.IGNORECASE)
@@ -75,6 +82,9 @@ def clumpFractions(s):
     """
 
     return re.sub(r'(\d+)\s+(\d)/(\d)', r'\1_\2/\3', s)
+
+def unclump(s):
+    return re.sub(r'\_', ' ', s)
 
 
 def cleanUnicodeFractions(s):
@@ -146,3 +156,28 @@ def containsDigits(token):
     Returns true if the token contains numerals
     """
     return not not re.search(r"\d", token)
+
+
+def parseNumbers(s):
+    """
+    Parses a string that represents a number into a decimal data type so that
+    we can match the quantity field in the db with the quantity that appears
+    in the display name. Rounds the result to 2 places.
+    """
+    ss = unclump(s)
+
+    m3 = re.match('^\d+$', ss)
+    if m3 is not None:
+        return decimal.Decimal(round(float(ss), 2))
+
+    m1 = re.match(r'(\d+)\s+(\d)/(\d)', ss)
+    if m1 is not None:
+        num = int(m1.group(1)) + (float(m1.group(2)) / float(m1.group(3)))
+        return decimal.Decimal(str(round(num, 2)))
+
+    m2 = re.match(r'^(\d)/(\d)$', ss)
+    if m2 is not None:
+        num = float(m2.group(1)) / float(m2.group(2))
+        return decimal.Decimal(str(round(num, 2)))
+
+    return None

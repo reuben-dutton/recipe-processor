@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# annotation files for training CRF models
+PROD_CRF_ANN="data/annotations/annotated-product-02-28-23-20-08-06.json"
+INGR_CRF_ANN="data/annotations/annotated-nyt-ingredient.json"
+
+# model output locations for crf models
+PROD_CRF_MODEL="models/crf/products.crf"
+INGR_CRF_MODEL="models/crf/ingredients.crf"
+
+# untagged products and tagged products output
+UNTAGGED_PROD="data/products-full.json"
+TAGGED_PROD="data/tagged-products-full.csv"
+
+echo "Training PRODUCT CRF model"
+bin/train-model $PROD_CRF_ANN $PROD_CRF_MODEL
+echo "Training INGREDIENT CRF model"
+bin/train-model $INGR_CRF_ANN $INGR_CRF_MODEL
+
+echo "Parsing PRODUCT list located at ${UNTAGGED_PROD}"
+bin/parse-products $PROD_CRF_MODEL $UNTAGGED_PROD $TAGGED_PROD
+
+echo "Done!"

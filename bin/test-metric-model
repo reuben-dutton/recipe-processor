@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+if [ -z "$1" ];
+  then echo "Usage: parse_ingredients ingredients_file" && exit 1;
+fi
+export INGR_INPUT_FILE="$1"
+
+INGR_CRF_MODEL="models/crf/ingredients.crf"
+INGR_OUTPUT_FILE="parsed-ingredients.csv"
+
+echo "Passing ingredient list through CRF model..."
+bin/parse-ingredients $INGR_CRF_MODEL $INGR_INPUT_FILE $INGR_OUTPUT_FILE
+echo "Done."
+echo "Generating output..."
+pipenv run python bin/test.py > output.txt
+echo "Done!"

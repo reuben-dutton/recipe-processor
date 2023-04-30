@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ -z "$1" ];
+  then echo "Usage: rotate-model model_tar_file" && exit 1;
+fi
+export MODEL_TAR_FILE="$1"
+
+PROD_PIPELINE="models/metric/encoding/preprocessing-pipeline.pkl"
+METRIC_PIPELINE="models/metric/encoding/metric_pipeline.pkl"
+
+echo "Removing current models.."
+rm -f $PROD_PIPELINE
+rm -f $METRIC_PIPELINE
+echo "Done."
+
+echo "Decompressing given model .tar..."
+tar -xf $MODEL_TAR_FILE
+echo "Done."
+
+echo "Reconstructing product space from decompressed models..."
+pipenv run python bin/metric/reconstruct_product_space.py
+echo "Done."
+
+echo "Retraining neural models..."
+bin/train-neural
+echo "Done!"
